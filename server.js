@@ -107,42 +107,106 @@ app.get('/api/orders', (req, res) => {
 });
 
 app.post('/api/orders', (req, res) => {
-  const { id, date, customer, items, total, status } = req.body;
+  const { id, date, customer, ticket_number, billing_address, phone_number, tags, items, total, status } = req.body;
 
-  // Insert order
-  db.run(`
-    INSERT INTO orders (id, date, customer, total, status)
-    VALUES (?, ?, ?, ?, ?)
-  `, [id, date, customer, total, status], function(err) {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
+  // Check stock for all items first
+  let stockChecks = [];
+  let hasInsufficientStock = false;
 
-    // Insert order items
-    const stmt = db.prepare(`
-      INSERT INTO order_items (order_id, item_id, qty, sale_price)
-      VALUES (?, ?, ?, ?)
-    `);
+  items.forEach(item => {
+    db.get('SELECT quantity FROM items WHERE id = ?', [item.item_id], (err, row) => {
+      if (err) {
+        console.error('Error checking stock:', err);
+        hasInsufficientStock = true;
+        return;
+      }
+      if (!row || row.quantity < item.qty) {
+        hasInsufficientStock = true;
+        console.error('Insufficient stock for item:', item.item_id);
+      }
+      stockChecks.push(item.item_id);
+      if (stockChecks.length === items.length) {
+        if (hasInsufficientStock) {
+          res.status(400).json({ error: 'Insufficient stock for one or more items' });
+          return;
+        }
 
-    items.forEach(item => {
-      stmt.run(id, item.item_id, item.qty, item.sale_price);
-      // Update item quantity
-      db.run('UPDATE items SET quantity = quantity - ? WHERE id = ?', [item.qty, item.item_id]);
+        // Proceed with order creation
+        db.run(`
+          INSERT INTO orders (id, date, customer, ticket_number, billing_address, phone_number, tags, total, status)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [id, date, customer, ticket_number, billing_address, phone_number, tags, total, status], function(err) {
+          if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+          }
+
+          // Insert order items
+          const stmt = db.prepare(`
+            INSERT INTO order_items (order_id, item_id, qty, sale_price)
+            VALUES (?, ?, ?, ?)
+          `);
+
+          items.forEach(item => {
+            stmt.run(id, item.item_id, item.qty, item.sale_price);
+            // Update item quantity
+            db.run('UPDATE items SET quantity = quantity - ? WHERE id = ?', [item.qty, item.item_id]);
+          });
+
+          stmt.finalize();
+
+          res.json({ id: id, message: 'Order created successfully' });
+        });
+      }
     });
-
-    stmt.finalize();
-
-    res.json({ id: id, message: 'Order created successfully' });
   });
 });
 
 app.put('/api/orders/:id', (req, res) => {
-  const { date, customer, total, status } = req.body;
+  const { date, customer, ticket_number, billing_address, phone_number, tags, total, status } = req.body;
+  const updates = [];
+  const values = [];
+  if (date !== undefined) {
+    updates.push('date = ?');
+    values.push(date);
+  }
+  if (customer !== undefined) {
+    updates.push('customer = ?');
+    values.push(customer);
+  }
+  if (ticket_number !== undefined) {
+    updates.push('ticket_number = ?');
+    values.push(ticket_number);
+  }
+  if (billing_address !== undefined) {
+    updates.push('billing_address = ?');
+    values.push(billing_address);
+  }
+  if (phone_number !== undefined) {
+    updates.push('phone_number = ?');
+    values.push(phone_number);
+  }
+  if (tags !== undefined) {
+    updates.push('tags = ?');
+    values.push(tags);
+  }
+  if (total !== undefined) {
+    updates.push('total = ?');
+    values.push(total);
+  }
+  if (status !== undefined) {
+    updates.push('status = ?');
+    values.push(status);
+  }
+  if (updates.length === 0) {
+    res.status(400).json({ error: 'No fields to update' });
+    return;
+  }
+  values.push(req.params.id);
   db.run(`
-    UPDATE orders SET date = ?, customer = ?, total = ?, status = ?
+    UPDATE orders SET ${updates.join(', ')}
     WHERE id = ?
-  `, [date, customer, total, status, req.params.id], function(err) {
+  `, values, function(err) {
     if (err) {
       res.status(500).json({ error: err.message });
       return;
