@@ -13,20 +13,194 @@
       --accent:#06b6d4;
       --card:#0b1220;
       --muted:#94a3b8;
+      --success:#10b981;
+      --warning:#f59e0b;
+      --error:#ef4444;
+      --info:#3b82f6;
     }
-    body { background: #000; color: #e6eef8; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-    .glass { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.04); backdrop-filter: blur(6px); }
-    .neon-text { color: var(--neon); }
-    input, textarea, select { background:#071022; color:#e6eef8; border:1px solid rgba(255,255,255,0.04); }
-    input:focus, textarea:focus, select:focus { outline: none; box-shadow:0 0 0 3px rgba(139,92,246,0.12); border-color:var(--neon); }
-    .small { font-size:0.85rem; color:var(--muted); }
-    .badge-low { background:#3b0826; color:#ff6b6b; padding:.18rem .5rem; border-radius:.45rem; font-size:.75rem; }
-    .badge-ok { background:#08231c; color:#34d399; padding:.18rem .5rem; border-radius:.45rem; font-size:.75rem; }
-    .btn-primary { background:linear-gradient(90deg,var(--neon),#6366f1); color:white; border-radius:.5rem; padding:.55rem .9rem; }
-    .btn-ghost { background:transparent; border:1px solid rgba(255,255,255,0.04); padding:.45rem .7rem; border-radius:.45rem; color:#cbd5e1; }
+    * { box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #000 0%, #0f0f23 50%, #1a1a2e 100%);
+      color: #e6eef8;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.005));
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+    .glass:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .neon-text {
+      color: var(--neon);
+      text-shadow: 0 0 10px rgba(121, 121, 121, 0.5);
+    }
+    input, textarea, select {
+      background: linear-gradient(135deg, #071022 0%, #0a0a14 100%);
+      color: #e6eef8;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
+      border-color: var(--neon);
+      transform: scale(1.02);
+    }
+    .small { font-size: 0.85rem; color: var(--muted); }
+    .badge-low {
+      background: linear-gradient(135deg, #3b0826 0%, #581c37 100%);
+      color: #ff6b6b;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+    }
+    .badge-ok {
+      background: linear-gradient(135deg, #08231c 0%, #0f5132 100%);
+      color: #34d399;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(52, 211, 153, 0.2);
+    }
+    .badge-pending {
+      background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+      color: #fbbf24;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+    }
+    .badge-delivered {
+      background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+      color: #10b981;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+    }
+    .badge-processing {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+    }
+    .badge-shipped {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+    }
+    .badge-cancelled {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--neon) 0%, #6366f1 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(121, 121, 121, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(121, 121, 121, 0.4);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-1px);
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .slide-in {
+      animation: slideIn 0.4s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: var(--neon);
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
     /* mobile optim */
     @media (max-width:640px){
       .desktop-only{ display:none; }
+      .mobile-stack { flex-direction: column; gap: 1rem; }
+      .mobile-text-center { text-align: center; }
+      .mobile-full { width: 100%; }
+    }
+    /* scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.3);
     }
   </style>
 </head>
@@ -273,26 +447,96 @@
 
 <!-- CREATE ORDER MODAL -->
 <div id="modal-order" class="fixed inset-0 hidden items-center justify-center bg-black/60 z-30 p-4">
-  <div class="w-full max-w-3xl glass rounded-xl p-4">
-    <div class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold">Create Order</h3>
-      <button onclick="closeCreateOrder()" class="btn-ghost">Close</button>
+  <div class="w-full max-w-4xl glass rounded-xl p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-xl font-semibold neon-text">Create New Order</h3>
+      <button onclick="closeCreateOrder()" class="btn-ghost text-red-400 hover:text-red-300">✕ Close</button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+    <!-- Customer Details -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
       <div>
-        <div class="small text-gray-400 mb-2">Products</div>
-        <div id="orderProducts" class="space-y-2 max-h-72 overflow-y-auto"></div>
+        <label class="small text-gray-400 mb-1 block">Customer Name</label>
+        <input id="orderCustomer" class="w-full px-3 py-2 rounded-lg" placeholder="Enter customer name" value="Walk-in">
+      </div>
+      <div>
+        <label class="small text-gray-400 mb-1 block">Order Date</label>
+        <input id="orderDate" type="date" class="w-full px-3 py-2 rounded-lg" value="">
+      </div>
+      <div>
+        <label class="small text-gray-400 mb-1 block">Ticket Number</label>
+        <input id="orderTicket" class="w-full px-3 py-2 rounded-lg" placeholder="Enter ticket number">
+      </div>
+      <div>
+        <label class="small text-gray-400 mb-1 block">Billing Address</label>
+        <input id="orderAddress" class="w-full px-3 py-2 rounded-lg" placeholder="Enter billing address">
+      </div>
+      <div>
+        <label class="small text-gray-400 mb-1 block">Phone Number</label>
+        <input id="orderPhone" class="w-full px-3 py-2 rounded-lg" placeholder="Enter phone number">
+      </div>
+      <div>
+        <label class="small text-gray-400 mb-1 block">Tags</label>
+        <select id="orderTags" class="w-full px-3 py-2 rounded-lg">
+          <option value="">Select tag</option>
+          <option value="discord">Discord</option>
+          <option value="website">Website</option>
+          <option value="instagram">Instagram</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Products Section -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="small text-gray-400">Available Products</div>
+          <input id="productSearch" placeholder="Search products..." class="px-3 py-1 rounded bg-[#05060a] text-sm w-48" oninput="filterProducts()">
+        </div>
+        <div id="orderProducts" class="space-y-2 max-h-80 overflow-y-auto glass p-3 rounded-lg"></div>
       </div>
 
-      <div>
-        <div class="small text-gray-400 mb-2">Cart</div>
-        <div id="orderCart" class="space-y-2 min-h-[150px] p-2 bg-[#06080c] rounded"></div>
-        <div class="mt-3 flex items-center justify-between">
-          <div class="text-sm small text-gray-300">Total: <span id="orderTotal">₹0</span></div>
-          <button class="btn-primary" onclick="submitOrder()">Submit Order</button>
+      <!-- Cart Section -->
+      <div class="space-y-4">
+        <div class="small text-gray-400">Order Cart</div>
+        <div id="orderCart" class="space-y-2 min-h-[200px] p-3 bg-[#06080c] rounded-lg border border-white/5">
+          <div class="small text-gray-400 text-center py-8">No items added yet</div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="glass p-4 rounded-lg space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="small text-gray-400">Subtotal:</span>
+            <span class="font-medium" id="orderSubtotal">₹0</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="small text-gray-400">Tax (0%):</span>
+            <span class="font-medium" id="orderTax">₹0</span>
+          </div>
+          <hr class="border-white/5">
+          <div class="flex justify-between items-center text-lg font-semibold">
+            <span>Total:</span>
+            <span class="neon-text" id="orderTotal">₹0</span>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button class="btn-ghost flex-1" onclick="clearCart()">Clear Cart</button>
+          <button class="btn-primary flex-1" onclick="confirmOrder()" id="submitBtn">Create Order</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Confirmation Modal -->
+<div id="modal-confirm" class="fixed inset-0 hidden items-center justify-center bg-black/80 z-40 p-4">
+  <div class="w-full max-w-md glass rounded-xl p-6">
+    <h3 class="text-lg font-semibold mb-4 neon-text">Confirm Order</h3>
+    <div id="confirmDetails" class="space-y-2 small text-gray-300 mb-6"></div>
+    <div class="flex gap-3">
+      <button class="btn-ghost flex-1" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-primary flex-1" onclick="submitOrder()" id="confirmBtn">Confirm & Submit</button>
     </div>
   </div>
 </div>
@@ -527,6 +771,9 @@ async function deleteItem(id){
    =========================== */
 function openCreateOrder(){
   cart = {};
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('orderDate').value = today;
   renderOrderProducts();
   renderOrderCart();
   document.getElementById('modal-order').classList.remove('hidden');
@@ -534,10 +781,22 @@ function openCreateOrder(){
 function closeCreateOrder(){
   document.getElementById('modal-order').classList.add('hidden');
 }
+function filterProducts(){
+  renderOrderProducts();
+}
 function renderOrderProducts(){
   const cont = document.getElementById('orderProducts');
+  const search = (document.getElementById('productSearch').value || '').toLowerCase();
   cont.innerHTML = '';
-  items.forEach(it=>{
+  let filteredItems = items.slice();
+  if(search){
+    filteredItems = filteredItems.filter(it => (it.name || '').toLowerCase().includes(search) || (it.sku || '').toLowerCase().includes(search) || (it.category || '').toLowerCase().includes(search));
+  }
+  if(filteredItems.length === 0){
+    cont.innerHTML = '<div class="small text-gray-400 text-center py-4">No products found</div>';
+    return;
+  }
+  filteredItems.forEach(it=>{
     const el = document.createElement('div');
     el.className = 'flex items-center justify-between p-2 rounded hover:bg-white/2';
     el.innerHTML = `
@@ -555,9 +814,9 @@ function renderOrderProducts(){
 }
 function addToCart(id){
   const qty = Number(document.getElementById('q_'+id).value || 0);
-  if(qty <= 0) return alert('Enter qty');
+  if(qty <= 0) return alert('Enter quantity');
   const it = items.find(x=> x.id === id);
-  if(!it) return alert('Item missing');
+  if(!it) return alert('Item not found');
   if(it.quantity < qty) return alert('Insufficient stock');
   cart[id] = (cart[id] || 0) + qty;
   renderOrderCart();
@@ -565,25 +824,32 @@ function addToCart(id){
 function renderOrderCart(){
   const cont = document.getElementById('orderCart');
   cont.innerHTML = '';
-  let total = 0;
+  let subtotal = 0;
   const ids = Object.keys(cart);
-  if(!ids.length) cont.innerHTML = '<div class="small text-gray-400">No items</div>';
-  ids.forEach(id=>{
-    const it = items.find(x=> x.id === id);
-    const qty = cart[id];
-    const line = (it.sale_price || 0) * qty;
-    total += line;
-    const row = document.createElement('div');
-    row.className = 'flex items-center justify-between gap-2';
-    row.innerHTML = `<div><div class="font-medium">${it.name}</div><div class="small text-gray-400">${qty} × ${fmt(it.sale_price)}</div></div>
-      <div class="flex items-center gap-2">
-        <button class="btn-ghost text-xs" onclick="changeCartQty('${id}', -1)">-</button>
-        <div class="small">${qty}</div>
-        <button class="btn-ghost text-xs" onclick="changeCartQty('${id}', 1)">+</button>
-        <button class="btn-ghost text-xs text-red-400 ml-2" onclick="removeCart('${id}')">Remove</button>
-      </div>`;
-    cont.appendChild(row);
-  });
+  if(!ids.length) {
+    cont.innerHTML = '<div class="small text-gray-400 text-center py-8">No items added yet</div>';
+  } else {
+    ids.forEach(id=>{
+      const it = items.find(x=> x.id === id);
+      const qty = cart[id];
+      const line = (it.sale_price || 0) * qty;
+      subtotal += line;
+      const row = document.createElement('div');
+      row.className = 'flex items-center justify-between gap-2';
+      row.innerHTML = `<div><div class="font-medium">${it.name}</div><div class="small text-gray-400">${qty} × ${fmt(it.sale_price)}</div></div>
+        <div class="flex items-center gap-2">
+          <button class="btn-ghost text-xs" onclick="changeCartQty('${id}', -1)">-</button>
+          <div class="small">${qty}</div>
+          <button class="btn-ghost text-xs" onclick="changeCartQty('${id}', 1)">+</button>
+          <button class="btn-ghost text-xs text-red-400 ml-2" onclick="removeCart('${id}')">Remove</button>
+        </div>`;
+      cont.appendChild(row);
+    });
+  }
+  const tax = 0; // 0% tax
+  const total = subtotal + tax;
+  document.getElementById('orderSubtotal').innerText = fmt(subtotal);
+  document.getElementById('orderTax').innerText = fmt(tax);
   document.getElementById('orderTotal').innerText = fmt(total);
 }
 function changeCartQty(id, delta){
@@ -592,12 +858,38 @@ function changeCartQty(id, delta){
   renderOrderCart();
 }
 function removeCart(id){ delete cart[id]; renderOrderCart(); }
-
+function clearCart(){
+  cart = {};
+  renderOrderCart();
+}
+function confirmOrder(){
+  const ids = Object.keys(cart);
+  if(!ids.length) return alert('No items in cart');
+  const customer = document.getElementById('orderCustomer').value.trim() || 'Walk-in';
+  const date = document.getElementById('orderDate').value;
+  let details = `<div>Customer: ${customer}</div><div>Date: ${date}</div><div class="mt-2">Items:</div>`;
+  ids.forEach(id=>{
+    const it = items.find(x=> x.id === id);
+    const qty = cart[id];
+    details += `<div class="small">${it.name} — ${qty} × ${fmt(it.sale_price)}</div>`;
+  });
+  const total = document.getElementById('orderTotal').innerText;
+  details += `<div class="mt-2 font-semibold">Total: ${total}</div>`;
+  document.getElementById('confirmDetails').innerHTML = details;
+  document.getElementById('modal-confirm').classList.remove('hidden');
+}
+function closeConfirm(){
+  document.getElementById('modal-confirm').classList.add('hidden');
+}
 async function submitOrder(){
   const ids = Object.keys(cart);
   if(!ids.length) return alert('No items');
-  // simple prompt for customer
-  const customer = prompt('Customer name (optional)', 'Walk-in');
+  const customer = document.getElementById('orderCustomer').value.trim() || 'Walk-in';
+  const date = document.getElementById('orderDate').value;
+  const ticket_number = document.getElementById('orderTicket').value.trim();
+  const billing_address = document.getElementById('orderAddress').value.trim();
+  const phone_number = document.getElementById('orderPhone').value.trim();
+  const tags = document.getElementById('orderTags').value;
   let total = 0;
   const orderItems = [];
   for(const id of ids){
@@ -608,7 +900,7 @@ async function submitOrder(){
     total += (it.sale_price || 0) * qty;
     orderItems.push({ item_id:id, qty, sale_price: it.sale_price || 0 });
   }
-  const orderData = { customer: customer || 'Walk-in', items: orderItems, total, status:'Pending' };
+  const orderData = { customer, date, ticket_number, billing_address, phone_number, tags, items: orderItems, total, status:'Pending' };
   try {
     const res = await fetch(`${API_BASE}/api/orders`, {
       method: 'POST',
@@ -617,6 +909,7 @@ async function submitOrder(){
     });
     const ord = await res.json();
     closeCreateOrder();
+    closeConfirm();
     await renderAll();
     alert('Order created: ' + ord.id);
   } catch (err) {
@@ -636,8 +929,23 @@ function renderOrders(){
   list.forEach(o=>{
     const tr = document.createElement('tr');
     tr.className = 'border-b border-white/5';
-    tr.innerHTML = `<td class="py-3">${o.id}</td><td>${o.date}</td><td>${o.customer}</td><td class="small">${o.items.length} items</td><td>${fmt(o.total)}</td><td class="${o.status==='Delivered'?'text-green-400':'text-yellow-400'}">${o.status}</td>
-      <td><button class="btn-ghost text-xs" onclick="viewOrder('${o.id}')">View</button></td>`;
+    tr.innerHTML = `
+      <td class="py-3">${o.id}</td>
+      <td>${o.date || ''}</td>
+      <td>${o.customer}</td>
+      <td>${o.items.length} items</td>
+      <td>${fmt(o.total)}</td>
+      <td><span class="badge-${o.status.toLowerCase()}">${o.status}</span></td>
+      <td>
+        <button class="btn-ghost text-xs mr-1" onclick="viewOrder('${o.id}')">View</button>
+        <select class="text-xs bg-transparent border border-white/2 rounded px-1 py-0.5" onchange="updateOrderStatus('${o.id}', this.value)">
+          <option value="Pending" ${o.status === 'Pending' ? 'selected' : ''}>Pending</option>
+          <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+          <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+          <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+          <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+        </select>
+      </td>`;
     tbody.appendChild(tr);
   });
 }
@@ -653,6 +961,22 @@ function viewOrder(id){
   });
   text += `\\nTotal: ${fmt(o.total)}\\nStatus: ${o.status}`;
   alert(text);
+}
+
+/* update order status */
+async function updateOrderStatus(id, newStatus){
+  try {
+    const res = await fetch(`${API_BASE}/api/orders/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    if (!res.ok) throw new Error('Failed to update status');
+    await renderAll();
+  } catch (err) {
+    console.error('Error updating order status:', err);
+    alert('Error updating order status');
+  }
 }
 
 /* recent orders render */
