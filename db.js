@@ -33,6 +33,10 @@ db.serialize(() => {
       id TEXT PRIMARY KEY,
       date TEXT,
       customer TEXT,
+      ticket_number TEXT,
+      billing_address TEXT,
+      phone_number TEXT,
+      tags TEXT,
       total REAL DEFAULT 0,
       status TEXT DEFAULT 'Pending'
     )
