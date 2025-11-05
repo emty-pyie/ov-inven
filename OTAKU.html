@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>OTAKU VALLEY — INVENTORYx</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --neon:#797979;
+      --accent:#06b6d4;
+      --card:#0b1220;
+      --muted:#94a3b8;
+    }
+    body { background: #000; color: #e6eef8; font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    .glass { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.04); backdrop-filter: blur(6px); }
+    .neon-text { color: var(--neon); }
+    input, textarea, select { background:#071022; color:#e6eef8; border:1px solid rgba(255,255,255,0.04); }
+    input:focus, textarea:focus, select:focus { outline: none; box-shadow:0 0 0 3px rgba(139,92,246,0.12); border-color:var(--neon); }
+    .small { font-size:0.85rem; color:var(--muted); }
+    .badge-low { background:#3b0826; color:#ff6b6b; padding:.18rem .5rem; border-radius:.45rem; font-size:.75rem; }
+    .badge-ok { background:#08231c; color:#34d399; padding:.18rem .5rem; border-radius:.45rem; font-size:.75rem; }
+    .btn-primary { background:linear-gradient(90deg,var(--neon),#6366f1); color:white; border-radius:.5rem; padding:.55rem .9rem; }
+    .btn-ghost { background:transparent; border:1px solid rgba(255,255,255,0.04); padding:.45rem .7rem; border-radius:.45rem; color:#cbd5e1; }
+    /* mobile optim */
+    @media (max-width:640px){
+      .desktop-only{ display:none; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+<!-- LOGIN SCREEN -->
+<div id="screen-login" class="min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-md glass p-8 rounded-2xl shadow-xl">
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-extrabold">OTAKU <span class="neon-text">VALLEY</span></h1>
+      <p class="small mt-1">Admin control — anime merch & manga</p>
+    </div>
+
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="small">Username</label>
+        <input id="loginUser" class="mt-1 w-full px-3 py-2 rounded-lg" placeholder="admin" required>
+      </div>
+      <div>
+        <label class="small">Password</label>
+        <input id="loginPass" type="password" class="mt-1 w-full px-3 py-2 rounded-lg" placeholder="••••••" required>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label class="small"><input id="remember" type="checkbox" class="mr-2"/> Remember</label>
+        <button type="submit" class="btn-primary">Login</button>
+      </div>
+      <p id="loginError" class="text-red-400 small mt-2 hidden">Wrong credentials</p>
+    </form>
+
+    <div class="text-xs text-gray-400 mt-5 text-center">
+      Demo credentials — <b>admin</b> / <b>admin</b>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN (hidden until login) -->
+<div id="screen-app" class="hidden min-h-screen flex flex-col">
+
+  <!-- Top Nav -->
+  <header class="glass p-4 flex items-center justify-between sticky top-0 z-20">
+    <div class="flex items-center gap-4">
+      <div class="p-2 rounded-lg bg-gradient-to-br from-[#071026] to-transparent">
+        <h2 class="text-lg font-bold neon-text">OTAKU <span class="text-white">VALLEY</span></h2>
+      </div>
+      <div class="hidden sm:block small text-gray-400">Admin Portal</div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div class="hidden sm:flex items-center gap-2 small text-gray-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14"/></svg>
+        <span id="top-sales" class="font-medium">Sales today: ₹0</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button class="btn-ghost" title="Notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V4a2 2 0 10-4 0v1.083A6 6 0 004 11v3.159c0 .538-.214 1.055-.595 1.436L2 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        </button>
+        <div class="flex items-center gap-2">
+          <div class="text-sm small text-gray-300">Admin</div>
+          <button id="btnLogout" class="btn-ghost text-red-400">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-6 p-6">
+
+    <!-- LEFT NAV (mobile collapsible) -->
+    <aside class="lg:col-span-1 glass p-4 rounded-xl">
+      <nav class="space-y-2">
+        <button class="w-full text-left py-2 px-3 rounded-lg hover:bg-white/3" onclick="go('dashboard')">Dashboard</button>
+        <button class="w-full text-left py-2 px-3 rounded-lg hover:bg-white/3" onclick="go('inventory')">Inventory</button>
+        <button class="w-full text-left py-2 px-3 rounded-lg hover:bg-white/3" onclick="go('manage')">Manage Inventory</button>
+        <button class="w-full text-left py-2 px-3 rounded-lg hover:bg-white/3" onclick="go('orders')">Orders</button>
+        <button class="w-full text-left py-2 px-3 rounded-lg hover:bg-white/3" onclick="go('reports')">Reports</button>
+      </nav>
+
+      <div class="mt-6">
+        <div class="small text-gray-400 mb-2">Quick actions</div>
+        <div class="flex gap-2">
+          <button class="btn-primary w-full" onclick="go('manage'); showAddForm()">+ Add item</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="lg:col-span-4 space-y-6">
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard" class="">
+        <div class="flex items-center justify-between gap-4">
+          <h3 class="text-2xl font-semibold">Dashboard</h3>
+          <div class="small text-gray-400">Welcome back, Admin</div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+          <div class="glass p-4 rounded-xl">
+            <div class="small text-gray-400">Products</div>
+            <div class="flex items-center justify-between mt-2">
+              <div><div class="text-2xl font-bold" id="stat-products">0</div><div class="small text-gray-400">total SKUs</div></div>
+              <div class="text-xs badge-ok">Live</div>
+            </div>
+          </div>
+
+          <div class="glass p-4 rounded-xl">
+            <div class="small text-gray-400">Sales (period)</div>
+            <div class="mt-2">
+              <div class="text-2xl font-bold" id="stat-sales">₹0</div>
+              <div class="small text-gray-400">revenue</div>
+            </div>
+          </div>
+
+          <div class="glass p-4 rounded-xl">
+            <div class="small text-gray-400">Profit</div>
+            <div class="mt-2">
+              <div class="text-2xl font-bold text-green-400" id="stat-profit">₹0</div>
+              <div class="small text-gray-400">gross profit</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 glass p-4 rounded-xl">
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="font-medium">Recent Orders</h4>
+            <small class="small text-gray-400">Most recent 6</small>
+          </div>
+          <div id="recentOrders" class="space-y-3"></div>
+        </div>
+      </section>
+
+      <!-- INVENTORY (searchable) -->
+      <section id="page-inventory" class="hidden">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-semibold">Inventory</h3>
+          <div class="flex items-center gap-2">
+            <input id="invSearch" placeholder="Search SKU, name or category" class="px-3 py-2 rounded-lg w-64"/>
+            <button class="btn-ghost" onclick="renderInventory()">Search</button>
+          </div>
+        </div>
+
+        <div class="glass p-3 rounded-xl mt-4">
+          <table class="w-full small text-left">
+            <thead class="text-gray-400 text-xs border-b border-white/5">
+              <tr>
+                <th class="py-3">SKU</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Cost</th>
+                <th>Sale</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- MANAGE INVENTORY -->
+      <section id="page-manage" class="hidden">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-semibold">Manage Inventory</h3>
+          <div class="small text-gray-400">Add / edit / remove items</div>
+        </div>
+
+        <div class="glass p-4 rounded-xl mt-4">
+          <form id="itemForm" class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input id="item_sku" placeholder="SKU (eg. OV-FG-001)" />
+              <input id="item_name" placeholder="Name (eg. Naruto Figure)" required />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input id="item_cat" placeholder="Category (Figure / Manga / Apparel)" />
+              <input id="item_qty" type="number" placeholder="Quantity" />
+              <input id="item_reorder" type="number" placeholder="Reorder level" />
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <input id="item_cost" type="number" step="0.01" placeholder="Cost price" />
+              <input id="item_sale" type="number" step="0.01" placeholder="Sale price" />
+            </div>
+            <textarea id="item_desc" rows="3" placeholder="Description (optional)"></textarea>
+
+            <div class="flex gap-3">
+              <button type="button" class="btn-primary" onclick="saveItem()">Save item</button>
+              <button type="button" class="btn-ghost" onclick="resetForm()">Reset</button>
+              <div id="formMode" class="small text-gray-400 ml-auto">Mode: Add</div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ORDERS -->
+      <section id="page-orders" class="hidden">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-semibold">Orders</h3>
+          <div class="flex gap-2">
+            <button class="btn-primary" onclick="openCreateOrder()">+ Create Order</button>
+            <input id="orderSearch" placeholder="Search orders by ID or customer" class="px-3 py-2 rounded-lg"/>
+            <button class="btn-ghost" onclick="renderOrders()">Search</button>
+          </div>
+        </div>
+
+        <div class="glass p-3 rounded-xl mt-4">
+          <table class="w-full small text-left">
+            <thead class="text-gray-400 text-xs border-b border-white/5">
+              <tr><th class="py-3">ID</th><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Action</th></tr>
+            </thead>
+            <tbody id="ordersTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section id="page-reports" class="hidden">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-semibold">Reports</h3>
+          <div class="small text-gray-400">Quick analytics</div>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-4 mt-4">
+          <div class="glass p-4 rounded-xl">
+            <div class="small text-gray-400">Revenue (all time)</div>
+            <div class="text-2xl font-bold mt-2" id="repRevenue">₹0</div>
+          </div>
+          <div class="glass p-4 rounded-xl">
+            <div class="small text-gray-400">COGS</div>
+            <div class="text-2xl font-bold mt-2" id="repCogs">₹0</div>
+          </div>
+          <div class="glass p-4 rounded-xl">
+            <div class="small text-gray-400">Profit</div>
+            <div class="text-2xl font-bold mt-2 text-green-400" id="repProfit">₹0</div>
+          </div>
+        </div>
+
+        <div class="glass mt-4 p-4 rounded-xl">
+          <h4 class="font-medium">Top selling items</h4>
+          <ul id="repTop" class="mt-3 small text-gray-300"></ul>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- CREATE ORDER MODAL -->
+<div id="modal-order" class="fixed inset-0 hidden items-center justify-center bg-black/60 z-30 p-4">
+  <div class="w-full max-w-3xl glass rounded-xl p-4">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold">Create Order</h3>
+      <button onclick="closeCreateOrder()" class="btn-ghost">Close</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div>
+        <div class="small text-gray-400 mb-2">Products</div>
+        <div id="orderProducts" class="space-y-2 max-h-72 overflow-y-auto"></div>
+      </div>
+
+      <div>
+        <div class="small text-gray-400 mb-2">Cart</div>
+        <div id="orderCart" class="space-y-2 min-h-[150px] p-2 bg-[#06080c] rounded"></div>
+        <div class="mt-3 flex items-center justify-between">
+          <div class="text-sm small text-gray-300">Total: <span id="orderTotal">₹0</span></div>
+          <button class="btn-primary" onclick="submitOrder()">Submit Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===========================
+   API-based data + utils
+   =========================== */
+let items = [];
+let orders = [];
+let editModeId = null;
+let cart = {}; // for modal create order
+
+function genId(){ return 'id'+Math.random().toString(36).slice(2,9); }
+function fmt(n){ return '₹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:2}); }
+
+// API base URL
+const API_BASE = window.location.origin;
+
+// Fetch items from API
+async function fetchItems() {
+  try {
+    const res = await fetch(`${API_BASE}/api/items`);
+    items = await res.json();
+  } catch (err) {
+    console.error('Error fetching items:', err);
+  }
+}
+
+// Fetch orders from API
+async function fetchOrders() {
+  try {
+    const res = await fetch(`${API_BASE}/api/orders`);
+    orders = await res.json();
+  } catch (err) {
+    console.error('Error fetching orders:', err);
+  }
+}
+
+// Login
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('loginUser').value;
+  const password = document.getElementById('loginPass').value;
+  try {
+    const res = await fetch(`${API_BASE}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('screen-login').style.display = 'none';
+      document.getElementById('screen-app').style.display = 'block';
+      await initApp();
+    } else {
+      alert('Invalid credentials');
+    }
+  } catch (err) {
+    alert('Login failed');
+  }
+});
+document.getElementById('btnLogout').addEventListener('click', logout);
+function logout(){
+  location.reload();
+}
+
+/* ===========================
+   INIT
+   =========================== */
+async function initApp(){
+  await fetchItems();
+  await fetchOrders();
+  renderStats();
+  renderInventory();
+  renderRecentOrders();
+  renderOrders();
+  renderReports();
+  // default view
+  go('dashboard');
+}
+
+/* ===========================
+   NAV
+   =========================== */
+function go(page){
+  // hide all page sections
+  const pages = ['dashboard','inventory','manage','orders','reports'];
+  pages.forEach(p=>{
+    const el = document.getElementById('page-'+p);
+    if(el) el.classList.add('hidden');
+  });
+  // show chosen
+  const target = document.getElementById('page-'+page);
+  if(target) target.classList.remove('hidden');
+}
+
+/* ===========================
+   STATS & DASHBOARD
+   =========================== */
+function renderStats(){
+  const totalProducts = items.length;
+  const revenue = orders.reduce((s,o)=> s + Number(o.total || 0), 0);
+  let cogs = 0;
+  orders.forEach(o=>{
+    o.items.forEach(it => {
+      const prod = items.find(x=> x.id === it.item_id);
+      if(prod) cogs += (prod.cost_price || 0) * (it.qty || 0);
+    });
+  });
+  const profit = revenue - cogs;
+  document.getElementById('stat-products').innerText = totalProducts;
+  document.getElementById('stat-sales').innerText = fmt(revenue);
+  document.getElementById('stat-profit').innerText = fmt(profit);
+  document.getElementById('top-sales').innerText = 'Sales today: ' + fmt(revenue);
+  // recent orders area
+  renderRecentOrders();
+}
+
+/* ===========================
+   INVENTORY: list, search, render
+   =========================== */
+function renderInventory(){
+  const q = (document.getElementById('invSearch')?.value || '').trim().toLowerCase();
+  const tbody = document.getElementById('inventoryTable');
+  tbody.innerHTML = '';
+  let list = items.slice();
+  if(q){
+    list = list.filter(it => (it.sku||'').toLowerCase().includes(q) || (it.name||'').toLowerCase().includes(q) || (it.category||'').toLowerCase().includes(q));
+  }
+  if(list.length===0){
+    tbody.innerHTML = '<tr><td colspan="7" class="py-4 small text-gray-400">No items found.</td></tr>';
+    return;
+  }
+  list.forEach(it=>{
+    const low = (it.quantity <= (it.reorder_level||0));
+    const tr = document.createElement('tr');
+    tr.className = 'border-b border-white/5';
+    tr.innerHTML = `
+      <td class="py-3">${it.sku || ''}</td>
+      <td>${it.name}</td>
+      <td>${it.category || ''}</td>
+      <td>${it.quantity} ${low?'<span class="ml-2 badge-low">low</span>':''}</td>
+      <td>${fmt(it.cost_price || 0)}</td>
+      <td>${fmt(it.sale_price || 0)}</td>
+      <td>
+        <button class="btn-ghost text-xs mr-2" onclick="startEdit('${it.id}')">Edit</button>
+        <button class="btn-ghost text-xs text-red-400" onclick="deleteItem('${it.id}')">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ===========================
+   MANAGE INVENTORY: add/edit/delete
+   =========================== */
+function showAddForm(){
+  go('manage');
+  resetForm();
+}
+function resetForm(){
+  editModeId = null;
+  document.getElementById('itemForm').reset();
+  document.getElementById('formMode').innerText = 'Mode: Add';
+}
+function startEdit(id){
+  go('manage');
+  const it = items.find(x=>x.id===id);
+  if(!it) return alert('Item not found');
+  editModeId = id;
+  document.getElementById('item_sku').value = it.sku || '';
+  document.getElementById('item_name').value = it.name || '';
+  document.getElementById('item_cat').value = it.category || '';
+  document.getElementById('item_qty').value = it.quantity || 0;
+  document.getElementById('item_reorder').value = it.reorder_level || 0;
+  document.getElementById('item_cost').value = it.cost_price || 0;
+  document.getElementById('item_sale').value = it.sale_price || 0;
+  document.getElementById('item_desc').value = it.description || '';
+  document.getElementById('formMode').innerText = 'Mode: Edit';
+}
+async function saveItem(){
+  const sku = document.getElementById('item_sku').value.trim();
+  const name = document.getElementById('item_name').value.trim();
+  if(!name) return alert('Name required');
+  const cat = document.getElementById('item_cat').value.trim();
+  const qty = Number(document.getElementById('item_qty').value || 0);
+  const reorder = Number(document.getElementById('item_reorder').value || 0);
+  const cost = Number(document.getElementById('item_cost').value || 0);
+  const sale = Number(document.getElementById('item_sale').value || 0);
+  const desc = document.getElementById('item_desc').value.trim();
+
+  const itemData = { sku, name, category: cat, quantity: qty, reorder_level: reorder, cost_price: cost, sale_price: sale, description: desc };
+
+  try {
+    if(editModeId){
+      await fetch(`${API_BASE}/api/items/${editModeId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemData)
+      });
+      editModeId = null;
+    } else {
+      itemData.id = genId();
+      await fetch(`${API_BASE}/api/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(itemData)
+      });
+    }
+    resetForm();
+    await renderAll();
+    alert('Saved');
+  } catch (err) {
+    console.error('Error saving item:', err);
+    alert('Error saving item');
+  }
+}
+async function deleteItem(id){
+  if(!confirm('Delete this item?')) return;
+  try {
+    await fetch(`${API_BASE}/api/items/${id}`, { method: 'DELETE' });
+    await renderAll();
+  } catch (err) {
+    console.error('Error deleting item:', err);
+    alert('Error deleting item');
+  }
+}
+
+/* ===========================
+   ORDERS: create + list + view
+   =========================== */
+function openCreateOrder(){
+  cart = {};
+  renderOrderProducts();
+  renderOrderCart();
+  document.getElementById('modal-order').classList.remove('hidden');
+}
+function closeCreateOrder(){
+  document.getElementById('modal-order').classList.add('hidden');
+}
+function renderOrderProducts(){
+  const cont = document.getElementById('orderProducts');
+  cont.innerHTML = '';
+  items.forEach(it=>{
+    const el = document.createElement('div');
+    el.className = 'flex items-center justify-between p-2 rounded hover:bg-white/2';
+    el.innerHTML = `
+      <div>
+        <div class="font-medium">${it.name}</div>
+        <div class="small text-gray-400">${it.sku || ''} • ${it.category || ''} • In stock: ${it.quantity}</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <input type="number" min="0" max="${it.quantity}" value="0" id="q_${it.id}" class="px-2 py-1 bg-[#05060a] rounded w-20 small" />
+        <button class="btn-primary text-xs" onclick="addToCart('${it.id}')">Add</button>
+      </div>
+    `;
+    cont.appendChild(el);
+  });
+}
+function addToCart(id){
+  const qty = Number(document.getElementById('q_'+id).value || 0);
+  if(qty <= 0) return alert('Enter qty');
+  const it = items.find(x=> x.id === id);
+  if(!it) return alert('Item missing');
+  if(it.quantity < qty) return alert('Insufficient stock');
+  cart[id] = (cart[id] || 0) + qty;
+  renderOrderCart();
+}
+function renderOrderCart(){
+  const cont = document.getElementById('orderCart');
+  cont.innerHTML = '';
+  let total = 0;
+  const ids = Object.keys(cart);
+  if(!ids.length) cont.innerHTML = '<div class="small text-gray-400">No items</div>';
+  ids.forEach(id=>{
+    const it = items.find(x=> x.id === id);
+    const qty = cart[id];
+    const line = (it.sale_price || 0) * qty;
+    total += line;
+    const row = document.createElement('div');
+    row.className = 'flex items-center justify-between gap-2';
+    row.innerHTML = `<div><div class="font-medium">${it.name}</div><div class="small text-gray-400">${qty} × ${fmt(it.sale_price)}</div></div>
+      <div class="flex items-center gap-2">
+        <button class="btn-ghost text-xs" onclick="changeCartQty('${id}', -1)">-</button>
+        <div class="small">${qty}</div>
+        <button class="btn-ghost text-xs" onclick="changeCartQty('${id}', 1)">+</button>
+        <button class="btn-ghost text-xs text-red-400 ml-2" onclick="removeCart('${id}')">Remove</button>
+      </div>`;
+    cont.appendChild(row);
+  });
+  document.getElementById('orderTotal').innerText = fmt(total);
+}
+function changeCartQty(id, delta){
+  cart[id] = Math.max(0, (cart[id]||0) + delta);
+  if(cart[id] === 0) delete cart[id];
+  renderOrderCart();
+}
+function removeCart(id){ delete cart[id]; renderOrderCart(); }
+
+async function submitOrder(){
+  const ids = Object.keys(cart);
+  if(!ids.length) return alert('No items');
+  // simple prompt for customer
+  const customer = prompt('Customer name (optional)', 'Walk-in');
+  let total = 0;
+  const orderItems = [];
+  for(const id of ids){
+    const qty = cart[id];
+    const it = items.find(x=> x.id===id);
+    if(!it) return alert('Item vanished');
+    if(it.quantity < qty) return alert('Insufficient stock for ' + it.name);
+    total += (it.sale_price || 0) * qty;
+    orderItems.push({ item_id:id, qty, sale_price: it.sale_price || 0 });
+  }
+  const orderData = { customer: customer || 'Walk-in', items: orderItems, total, status:'Pending' };
+  try {
+    const res = await fetch(`${API_BASE}/api/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+    const ord = await res.json();
+    closeCreateOrder();
+    await renderAll();
+    alert('Order created: ' + ord.id);
+  } catch (err) {
+    console.error('Error creating order:', err);
+    alert('Error creating order');
+  }
+}
+
+/* render order list */
+function renderOrders(){
+  const q = (document.getElementById('orderSearch')?.value || '').toLowerCase();
+  const tbody = document.getElementById('ordersTable');
+  tbody.innerHTML = '';
+  let list = orders.slice();
+  if(q) list = list.filter(o=> (o.id||'').toLowerCase().includes(q) || (o.customer||'').toLowerCase().includes(q));
+  if(list.length === 0) tbody.innerHTML = '<tr><td colspan="7" class="py-4 small text-gray-400">No orders</td></tr>';
+  list.forEach(o=>{
+    const tr = document.createElement('tr');
+    tr.className = 'border-b border-white/5';
+    tr.innerHTML = `<td class="py-3">${o.id}</td><td>${o.date}</td><td>${o.customer}</td><td class="small">${o.items.length} items</td><td>${fmt(o.total)}</td><td class="${o.status==='Delivered'?'text-green-400':'text-yellow-400'}">${o.status}</td>
+      <td><button class="btn-ghost text-xs" onclick="viewOrder('${o.id}')">View</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* show order detail */
+function viewOrder(id){
+  const o = orders.find(x=> x.id === id);
+  if(!o) return alert('Order not found');
+  let text = `Order ${o.id}\\nDate: ${o.date}\\nCustomer: ${o.customer}\\n\\nItems:\\n`;
+  o.items.forEach(it=>{
+    const prod = items.find(p=> p.id === it.item_id);
+    text += `${prod ? prod.name : 'Deleted'} — ${it.qty} × ${fmt(it.sale_price)}\\n`;
+  });
+  text += `\\nTotal: ${fmt(o.total)}\\nStatus: ${o.status}`;
+  alert(text);
+}
+
+/* recent orders render */
+function renderRecentOrders(){
+  const container = document.getElementById('recentOrders');
+  container.innerHTML = '';
+  orders.slice(0,6).forEach(o=>{
+    const el = document.createElement('div');
+    el.className = 'flex items-center justify-between p-2 rounded hover:bg-white/2';
+    el.innerHTML = `<div><div class="font-medium">${o.id}</div><div class="small text-gray-400">${o.customer} • ${o.date}</div></div><div class="font-medium">${fmt(o.total)}</div>`;
+    container.appendChild(el);
+  });
+  if(orders.length===0) container.innerHTML = '<div class="small text-gray-400">No orders yet.</div>';
+}
+
+/* ===========================
+   REPORTS
+   =========================== */
+function renderReports(){
+  const revenue = orders.reduce((s,o)=> s + Number(o.total || 0), 0);
+  let cogs = 0;
+  const soldMap = {};
+  orders.forEach(o=>{
+    o.items.forEach(it=>{
+      const prod = items.find(p=> p.id===it.item_id);
+      if(prod) {
+        cogs += (prod.cost_price || 0) * it.qty;
+        soldMap[prod.name] = (soldMap[prod.name] || 0) + it.qty;
+      }
+    });
+  });
+  const profit = revenue - cogs;
+  document.getElementById('repRevenue').innerText = fmt(revenue);
+  document.getElementById('repCogs').innerText = fmt(cogs);
+  document.getElementById('repProfit').innerText = fmt(profit);
+  // top selling
+  const arr = Object.keys(soldMap).map(k=> ({name:k, sold:soldMap[k]})).sort((a,b)=> b.sold - a.sold).slice(0,10);
+  const ul = document.getElementById('repTop'); ul.innerHTML = '';
+  if(arr.length===0) ul.innerHTML = '<li class="small text-gray-400">No sales</li>';
+  arr.forEach(a=> ul.innerHTML += `<li>${a.name} — ${a.sold} sold</li>`);
+}
+
+/* ===========================
+   UTIL: update everything when items/orders change
+   =========================== */
+async function renderAll(){
+  await fetchItems();
+  await fetchOrders();
+  renderInventory(); renderStats(); renderOrders(); renderReports(); renderRecentOrders();
+}
+
+</script>
+</body>
+</html>
